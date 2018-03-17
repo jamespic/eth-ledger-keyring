@@ -9,21 +9,21 @@ const hdPathString = `m/44'/60'/0'`
 const type = 'Ledger Hardware Keyring'
 
 class LedgerKeyring extends EventEmitter {
-  constructor (opts) {
+  constructor (opts = {}) {
     super()
     this.type = type
+    this.lock = new Lock()
     if (opts.transport) {
       this.transport = opts.transport
     }
     this.deserialize(opts)
-    this.lock = new Lock()
   }
 
   serialize () {
     return {hdPath: this.hdPath, accounts: this.accounts}
   }
 
-  deserialize (opts) {
+  deserialize (opts = {}) {
     this.hdPath = opts.hdPath || hdPathString
     this.accounts = opts.accounts || []
   }
