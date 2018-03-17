@@ -73,6 +73,18 @@ describe('LedgerKeyring', function () {
     expect(allAccounts).to.deep.equal(expectedAccounts)
   })
 
+  it('adds same accounts after serialization', async function() {
+    let instance = new LedgerKeyring({
+      hdPath: testnetPath,
+      transport
+    })
+    await instance.addAccounts(1)
+    let dehydrated = instance.serialize()
+    let rehydrated = new LedgerKeyring({transport})
+    rehydrated.deserialize(dehydrated)
+    expect(await rehydrated.addAccounts(1)).to.deep.equal([expectedAccounts[1]])
+  })
+
   it('can sign personal messages', async function () {
     let instance = new LedgerKeyring({
       hdPath: testnetPath,
@@ -85,7 +97,7 @@ describe('LedgerKeyring', function () {
     expect(signatureForAccount.toLowerCase()).to.equal(expectedAccounts[1].toLowerCase())
   })
 
-  it('throws an exception if a ledger device generates a personal signature for a different device than expected', async function () {
+  it('throws an exception if the wrong device is attached when signing personal messages', async function () {
     let instance = new LedgerKeyring({
       hdPath: testnetPath,
       accounts: [badAccount],
@@ -96,7 +108,23 @@ describe('LedgerKeyring', function () {
       await instance.signPersonalMessage(badAccount, message)
     } catch (e) {
       expect(e.message).to.equal(
-        `Signature is for ${expectedAccounts[0].toLowerCase()} but expected ${badAccount} - is the correct Ledger device attached?`
+        `Incorrect Ledger device attached - expected device containg account ${badAccount}, but found ${expectedAccounts[0]}`
+      )
+    }
+  })
+
+  it('throws an exception if a ledger device generates a personal signature for a different device than expected', async function () {
+    let instance = new LedgerKeyring({
+      hdPath: testnetPath,
+      accounts: [expectedAccounts[0], badAccount],
+      transport
+    })
+    let message = '0xdeadbeefface'
+    try {
+      await instance.signPersonalMessage(badAccount, message)
+    } catch (e) {
+      expect(e.message).to.equal(
+        `Signature is for ${expectedAccounts[1].toLowerCase()} but expected ${badAccount} - is the correct Ledger device attached?`
       )
     }
   })
@@ -113,7 +141,7 @@ describe('LedgerKeyring', function () {
     expect(signatureForAccount.toLowerCase()).to.equal(expectedAccounts[2].toLowerCase())
   })
 
-  it('throws an exception if a ledger device generates a transaction signature for a different device than expected', async function () {
+  it('throws an exception if the wrong device is attached when signing transactions', async function () {
     let instance = new LedgerKeyring({
       hdPath: testnetPath,
       accounts: [badAccount],
@@ -124,7 +152,23 @@ describe('LedgerKeyring', function () {
       await instance.signTransaction(badAccount, tx)
     } catch (e) {
       expect(e.message).to.equal(
-        `Signature is for ${expectedAccounts[0].toLowerCase()} but expected ${badAccount} - is the correct Ledger device attached?`
+        `Incorrect Ledger device attached - expected device containg account ${badAccount}, but found ${expectedAccounts[0]}`
+      )
+    }
+  })
+
+  it('throws an exception if a ledger device generates a transaction signature for a different device than expected', async function () {
+    let instance = new LedgerKeyring({
+      hdPath: testnetPath,
+      accounts: [expectedAccounts[0], badAccount],
+      transport
+    })
+    var tx = new EthereumTx(txParams)
+    try {
+      await instance.signTransaction(badAccount, tx)
+    } catch (e) {
+      expect(e.message).to.equal(
+        `Signature is for ${expectedAccounts[1].toLowerCase()} but expected ${badAccount} - is the correct Ledger device attached?`
       )
     }
   })
