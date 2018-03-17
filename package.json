@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jamespic/ledger-keyring.git"
+    "url": "git+https://github.com/jamespic/eth-ledger-keyring.git"
   },
   "author": "James Pickering",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jamespic/ledger-keyring/issues"
+    "url": "https://github.com/jamespic/eth-ledger-keyring/issues"
   },
-  "homepage": "https://github.com/jamespic/ledger-keyring#readme",
+  "homepage": "https://github.com/jamespic/eth-ledger-keyring#readme",
   "dependencies": {
     "@ledgerhq/hw-app-eth": "^4.6.0",
     "@ledgerhq/hw-transport-u2f": "^4.6.0",
