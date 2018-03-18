@@ -20,12 +20,13 @@ class LedgerKeyring extends EventEmitter {
   }
 
   serialize () {
-    return {hdPath: this.hdPath, accounts: this.accounts}
+    return Promise.resolve({hdPath: this.hdPath, accounts: this.accounts})
   }
 
   deserialize (opts = {}) {
     this.hdPath = opts.hdPath || hdPathString
     this.accounts = opts.accounts || []
+    return Promise.resolve()
   }
 
   async addAccounts (n = 1) {

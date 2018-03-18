@@ -79,9 +79,9 @@ describe('LedgerKeyring', function () {
       transport
     })
     await instance.addAccounts(1)
-    let dehydrated = instance.serialize()
+    let dehydrated = await instance.serialize()
     let rehydrated = new LedgerKeyring({transport})
-    rehydrated.deserialize(dehydrated)
+    await rehydrated.deserialize(dehydrated)
     expect(await rehydrated.addAccounts(1)).to.deep.equal([expectedAccounts[1]])
   })
 
